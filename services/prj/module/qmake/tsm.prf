@@ -1,0 +1,83 @@
+#
+# TSM extra-compiler for handling files specified in the TSM_SERVER_SOURCES and TSM_CLIENT_SOURCES
+#
+
+isEmpty(TSM_DIR):TSM_DIR = .
+isEmpty(TSM_PREFIX):TSM_PREFIX = tsm_
+isEmpty(TSM_COMMAND):TSM_COMMAND = /usr/local/lib/tsm/tsm
+
+QMAKE_LIBDIR += $$(WINGDIR)/lib
+INCLUDEPATH  += $$(KSADIR)/include $$(WINGDIR)/include
+LIBS += -lleft
+
+_tsm_h.name    = TSM header for ${QMAKE_FILE_IN}
+_tsm_h.output  = $$TSM_DIR/$${TSM_PREFIX}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_H)}
+_tsm_h.CONFIG += no_link
+_tsm_h.variable_output = GENERATED_FILES
+_tsm_h.dependency_type = TYPE_C
+
+_tsm_cpp.name     = TSM source for ${QMAKE_FILE_IN}
+_tsm_cpp.output   = $$TSM_DIR/$${TSM_PREFIX}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+_tsm_cpp.depends  = $$_tsm_h.output
+_tsm_cpp.commands = $$escape_expand(\n)  # Don't need any commands here, but if field is empty no rules are created
+_tsm_cpp.variable_out    = GENERATED_SOURCES
+_tsm_cpp.dependency_type = TYPE_C
+
+{
+    tsm_server_h.name            = $$_tsm_h.name
+    tsm_server_h.input           = TSM_SERVER_SOURCES
+    tsm_server_h.output          = $$_tsm_h.output
+    tsm_server_h.variable_output = $$_tsm_h.variable_output
+    tsm_server_h.CONFIG          = $$_tsm_h.CONFIG
+    tsm_server_h.commands = \
+                       $$TSM_COMMAND -t server ${QMAKE_FILE_IN} $$escape_expand(\n\t) \
+                       mv -f $${TSM_PREFIX}${QMAKE_FILE_BASE}.* $$TSM_DIR/ $$escape_expand(\n\t)
+    tsm_server_h.dependency_type = $$_tsm_h.dependency_type
+    silent:tsm_server_h.commands = @echo TSM ${QMAKE_FILE_IN} && $$tsm_server_h.commands
+
+    tsm_server_cpp.name         = $$_tsm_cpp.name
+    tsm_server_cpp.input        = TSM_SERVER_SOURCES
+    tsm_server_cpp.output       = $$_tsm_cpp.output
+    tsm_server_cpp.variable_out = $$_tsm_cpp.variable_out
+    tsm_server_cpp.depends      = $$tsm_server_h.output
+    tsm_server_cpp.commands     = $$_tsm_cpp.commands
+    tsm_server_cpp.dependency_type = $$_tsm_cpp.dependency_type
+
+    QMAKE_EXTRA_COMPILERS += tsm_server_h tsm_server_cpp
+}
+
+{
+    tsm_client_h.name            = $$_tsm_h.name
+    tsm_client_h.input           = TSM_CLIENT_SOURCES
+    tsm_client_h.output          = $$_tsm_h.output
+    tsm_client_h.variable_output = $$_tsm_h.variable_output
+    tsm_client_h.CONFIG          = $$_tsm_h.CONFIG
+    tsm_client_h.commands = \
+                       $$TSM_COMMAND -t client ${QMAKE_FILE_IN} $$escape_expand(\n\t) \
+                       mv -f $${TSM_PREFIX}${QMAKE_FILE_BASE}.* $$TSM_DIR/ $$escape_expand(\n\t)
+    tsm_client_h.dependency_type = $$_tsm_h.dependency_type
+    silent:tsm_client_h.commands = @echo TSM ${QMAKE_FILE_IN} && $$tsm_client_h.commands
+
+    tsm_client_cpp.name         = $$_tsm_cpp.name
+    tsm_client_cpp.input        = TSM_CLIENT_SOURCES
+    tsm_client_cpp.output       = $$_tsm_cpp.output
+    tsm_client_cpp.variable_out = $$_tsm_cpp.variable_out
+    tsm_client_cpp.depends      = $$tsm_client_h.output
+    tsm_client_cpp.commands     = $$_tsm_cpp.commands
+    tsm_client_cpp.dependency_type = $$_tsm_cpp.dependency_type
+
+    QMAKE_EXTRA_COMPILERS += tsm_client_h tsm_client_cpp
+}
+
+{
+    load(moc)
+
+    tsm_moc.name         = TSM moc ${QMAKE_FILE_IN}
+    tsm_moc.output       = $$MOC_DIR/$${QMAKE_H_MOD_MOC}$${TSM_PREFIX}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+    tsm_moc.commands     = $$QMAKE_MOC $(DEFINES) $(INCPATH) $$_tsm_h.output -o $$tsm_moc.output
+    tsm_moc.input        = TSM_CLIENT_SOURCES TSM_SERVER_SOURCES
+    tsm_moc.depends      = $$_tsm_h.output
+    tsm_moc.variable_out = GENERATED_SOURCES
+
+    QMAKE_EXTRA_COMPILERS += tsm_moc
+}

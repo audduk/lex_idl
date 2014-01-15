@@ -1,0 +1,24 @@
+module colorPrimer {
+	enum Color { red, green, blue };
+
+	struct Object {
+		int id_obj;
+		Color col; 
+	};
+
+	tsm_interface collorSetter {
+	events:
+		void colorChanged(Object object);
+	commands:
+		void setColors(	in: 	sequence<Object> objects );
+		void askColor (	in: 	int id_obj
+				out:	raw Object object );
+	};
+
+	tsm_interface objectProcessor {
+	events:
+		void objectChanged(Object object);
+	commands:
+		void processObjects(inout: sequence<Object> objects);
+	};
+}

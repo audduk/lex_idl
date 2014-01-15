@@ -1,0 +1,17 @@
+#define TOK_MODULE 257
+#define TOK_ENUM 258
+#define TOK_CONST 259
+#define TOK_STRUCT 260
+#define TOK_TSMIFACE 261
+#define TOK_COMMANDS 262
+#define TOK_EVENTS 263
+#define TOK_INSECT 264
+#define TOK_INOUTSECT 265
+#define TOK_OUTSECT 266
+#define TOK_SEQUENCE 267
+#define TOK_IDENT 268
+#define TOK_INT 269
+#define TOK_FLOAT 270
+#define TOK_STR 271
+#define TOK_VOID 272
+#define TOK_RAW 273

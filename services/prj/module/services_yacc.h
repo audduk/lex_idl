@@ -1,0 +1,10 @@
+#define TOK_SERVICE 257
+#define TOK_ENUM 258
+#define TOK_CONST 259
+#define TOK_STRUCT 260
+#define TOK_SEQUENCE 261
+#define TOK_IDENT 262
+#define TOK_INT 263
+#define TOK_FLOAT 264
+#define TOK_STR 265
+#define TOK_VOID 266

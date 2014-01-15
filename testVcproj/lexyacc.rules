@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="Lex and Yacc preprocessors"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="LEX. Scanner code generator"
+			DisplayName="LEX. Scanner code generator"
+			CommandLine="&quot;c:\Program Files\GnuWin32\bin\flex&quot; [AllOptions] &quot;-o.\GeneratedFiles\$(InputName)_lex.c&quot; &quot;$(InputPath)&quot;"
+			Outputs=".\GeneratedFiles\$(InputName)_lex.c"
+			FileExtensions="*.l"
+			ExecutionDescription="Lex generates scanner for $(InputName).y"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="YACC. Parser code generator"
+			DisplayName="YACC. Parser code generator"
+			CommandLine="&quot;c:\Program Files\GnuWin32\bin\yacc.exe&quot; [AllOptions] -b $(InputName) $(InputPath)&#x0D;&#x0A;move $(InputName).tab.h .\GeneratedFiles\$(InputName)_yacc.h&#x0D;&#x0A;move $(InputName).tab.c .\GeneratedFiles\$(InputName)_yacc.c"
+			Outputs=".\GeneratedFiles\$(InputName)_yacc.c;.\GeneratedFiles\$(InputName)_yacc.h"
+			FileExtensions="*.y"
+			ExecutionDescription="Yacc generate parser for $(InputName).y"
+			>
+			<Properties>
+				<BooleanProperty
+					Name="OutputFile"
+					DisplayName="Make parser description file (.output)"
+					Description="Make parser description file"
+					Switch="-v"
+				/>
+				<BooleanProperty
+					Name="GenerateHFile"
+					DisplayName="GenerateHFile"
+					Description="Generate h-file with lexem constants"
+					Switch="-d"
+					DefaultValue="true"
+				/>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

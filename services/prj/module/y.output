@@ -1,0 +1,595 @@
+   0  $accept : result $end
+
+   1  result : statement
+   2         | result statement
+
+   3  statement : service
+
+   4  service : TOK_SERVICE def_ident TOK_STR '{' definition_list '}'
+
+   5  definition_list : definition
+   6                  | definition_list definition
+
+   7  definition : const
+   8             | struct
+   9             | enum
+  10             | function
+
+  11  const : TOK_CONST typed_ident '=' TOK_INT ';'
+  12        | TOK_CONST typed_ident '=' TOK_FLOAT ';'
+  13        | TOK_CONST typed_ident '=' TOK_STR ';'
+
+  14  struct : TOK_STRUCT def_ident '{' struct_arglist '}' ';'
+
+  15  struct_arglist : struct_arg
+  16                 | struct_arglist struct_arg
+
+  17  struct_arg : typed_ident ';'
+
+  18  enum : TOK_ENUM def_ident '{' enum_list '}' ';'
+
+  19  enum_list : enum_value
+  20            | enum_list ',' enum_value
+
+  21  enum_value : TOK_IDENT
+  22             | TOK_IDENT '=' TOK_INT
+
+  23  function : typed_ident def_ident '(' arglist ')' ';'
+
+  24  arglist :
+  25          | func_arg
+  26          | func_arg ';' arglist
+
+  27  func_arg : typed_ident
+
+  28  $$1 :
+
+  29  typed_ident : $$1 type TOK_IDENT
+
+  30  type : TOK_IDENT
+  31       | TOK_SEQUENCE '<' type '>'
+
+  32  def_ident : TOK_IDENT
+
+state 0
+	$accept : . result $end  (0)
+
+	TOK_SERVICE  shift 1
+	.  error
+
+	result  goto 2
+	statement  goto 3
+	service  goto 4
+
+
+state 1
+	service : TOK_SERVICE . def_ident TOK_STR '{' definition_list '}'  (4)
+
+	TOK_IDENT  shift 5
+	.  error
+
+	def_ident  goto 6
+
+
+state 2
+	$accept : result . $end  (0)
+	result : result . statement  (2)
+
+	$end  accept
+	TOK_SERVICE  shift 1
+	.  error
+
+	statement  goto 7
+	service  goto 4
+
+
+state 3
+	result : statement .  (1)
+
+	.  reduce 1
+
+
+state 4
+	statement : service .  (3)
+
+	.  reduce 3
+
+
+state 5
+	def_ident : TOK_IDENT .  (32)
+
+	.  reduce 32
+
+
+state 6
+	service : TOK_SERVICE def_ident . TOK_STR '{' definition_list '}'  (4)
+
+	TOK_STR  shift 8
+	.  error
+
+
+state 7
+	result : result statement .  (2)
+
+	.  reduce 2
+
+
+state 8
+	service : TOK_SERVICE def_ident TOK_STR . '{' definition_list '}'  (4)
+
+	'{'  shift 9
+	.  error
+
+
+state 9
+	service : TOK_SERVICE def_ident TOK_STR '{' . definition_list '}'  (4)
+	$$1 : .  (28)
+
+	TOK_ENUM  shift 10
+	TOK_CONST  shift 11
+	TOK_STRUCT  shift 12
+	TOK_SEQUENCE  reduce 28
+	TOK_IDENT  reduce 28
+
+	definition_list  goto 13
+	definition  goto 14
+	const  goto 15
+	struct  goto 16
+	enum  goto 17
+	function  goto 18
+	typed_ident  goto 19
+	$$1  goto 20
+
+
+state 10
+	enum : TOK_ENUM . def_ident '{' enum_list '}' ';'  (18)
+
+	TOK_IDENT  shift 5
+	.  error
+
+	def_ident  goto 21
+
+
+state 11
+	const : TOK_CONST . typed_ident '=' TOK_INT ';'  (11)
+	const : TOK_CONST . typed_ident '=' TOK_FLOAT ';'  (12)
+	const : TOK_CONST . typed_ident '=' TOK_STR ';'  (13)
+	$$1 : .  (28)
+
+	.  reduce 28
+
+	typed_ident  goto 22
+	$$1  goto 20
+
+
+state 12
+	struct : TOK_STRUCT . def_ident '{' struct_arglist '}' ';'  (14)
+
+	TOK_IDENT  shift 5
+	.  error
+
+	def_ident  goto 23
+
+
+state 13
+	service : TOK_SERVICE def_ident TOK_STR '{' definition_list . '}'  (4)
+	definition_list : definition_list . definition  (6)
+	$$1 : .  (28)
+
+	TOK_ENUM  shift 10
+	TOK_CONST  shift 11
+	TOK_STRUCT  shift 12
+	'}'  shift 24
+	TOK_SEQUENCE  reduce 28
+	TOK_IDENT  reduce 28
+
+	definition  goto 25
+	const  goto 15
+	struct  goto 16
+	enum  goto 17
+	function  goto 18
+	typed_ident  goto 19
+	$$1  goto 20
+
+
+state 14
+	definition_list : definition .  (5)
+
+	.  reduce 5
+
+
+state 15
+	definition : const .  (7)
+
+	.  reduce 7
+
+
+state 16
+	definition : struct .  (8)
+
+	.  reduce 8
+
+
+state 17
+	definition : enum .  (9)
+
+	.  reduce 9
+
+
+state 18
+	definition : function .  (10)
+
+	.  reduce 10
+
+
+state 19
+	function : typed_ident . def_ident '(' arglist ')' ';'  (23)
+
+	TOK_IDENT  shift 5
+	.  error
+
+	def_ident  goto 26
+
+
+state 20
+	typed_ident : $$1 . type TOK_IDENT  (29)
+
+	TOK_SEQUENCE  shift 27
+	TOK_IDENT  shift 28
+	.  error
+
+	type  goto 29
+
+
+state 21
+	enum : TOK_ENUM def_ident . '{' enum_list '}' ';'  (18)
+
+	'{'  shift 30
+	.  error
+
+
+state 22
+	const : TOK_CONST typed_ident . '=' TOK_INT ';'  (11)
+	const : TOK_CONST typed_ident . '=' TOK_FLOAT ';'  (12)
+	const : TOK_CONST typed_ident . '=' TOK_STR ';'  (13)
+
+	'='  shift 31
+	.  error
+
+
+state 23
+	struct : TOK_STRUCT def_ident . '{' struct_arglist '}' ';'  (14)
+
+	'{'  shift 32
+	.  error
+
+
+state 24
+	service : TOK_SERVICE def_ident TOK_STR '{' definition_list '}' .  (4)
+
+	.  reduce 4
+
+
+state 25
+	definition_list : definition_list definition .  (6)
+
+	.  reduce 6
+
+
+state 26
+	function : typed_ident def_ident . '(' arglist ')' ';'  (23)
+
+	'('  shift 33
+	.  error
+
+
+state 27
+	type : TOK_SEQUENCE . '<' type '>'  (31)
+
+	'<'  shift 34
+	.  error
+
+
+state 28
+	type : TOK_IDENT .  (30)
+
+	.  reduce 30
+
+
+state 29
+	typed_ident : $$1 type . TOK_IDENT  (29)
+
+	TOK_IDENT  shift 35
+	.  error
+
+
+state 30
+	enum : TOK_ENUM def_ident '{' . enum_list '}' ';'  (18)
+
+	TOK_IDENT  shift 36
+	.  error
+
+	enum_list  goto 37
+	enum_value  goto 38
+
+
+state 31
+	const : TOK_CONST typed_ident '=' . TOK_INT ';'  (11)
+	const : TOK_CONST typed_ident '=' . TOK_FLOAT ';'  (12)
+	const : TOK_CONST typed_ident '=' . TOK_STR ';'  (13)
+
+	TOK_INT  shift 39
+	TOK_FLOAT  shift 40
+	TOK_STR  shift 41
+	.  error
+
+
+state 32
+	struct : TOK_STRUCT def_ident '{' . struct_arglist '}' ';'  (14)
+	$$1 : .  (28)
+
+	.  reduce 28
+
+	typed_ident  goto 42
+	struct_arglist  goto 43
+	struct_arg  goto 44
+	$$1  goto 20
+
+
+state 33
+	function : typed_ident def_ident '(' . arglist ')' ';'  (23)
+	arglist : .  (24)
+	$$1 : .  (28)
+
+	TOK_SEQUENCE  reduce 28
+	TOK_IDENT  reduce 28
+	')'  reduce 24
+
+	typed_ident  goto 45
+	arglist  goto 46
+	func_arg  goto 47
+	$$1  goto 20
+
+
+state 34
+	type : TOK_SEQUENCE '<' . type '>'  (31)
+
+	TOK_SEQUENCE  shift 27
+	TOK_IDENT  shift 28
+	.  error
+
+	type  goto 48
+
+
+state 35
+	typed_ident : $$1 type TOK_IDENT .  (29)
+
+	.  reduce 29
+
+
+state 36
+	enum_value : TOK_IDENT .  (21)
+	enum_value : TOK_IDENT . '=' TOK_INT  (22)
+
+	'='  shift 49
+	'}'  reduce 21
+	','  reduce 21
+
+
+state 37
+	enum : TOK_ENUM def_ident '{' enum_list . '}' ';'  (18)
+	enum_list : enum_list . ',' enum_value  (20)
+
+	'}'  shift 50
+	','  shift 51
+	.  error
+
+
+state 38
+	enum_list : enum_value .  (19)
+
+	.  reduce 19
+
+
+state 39
+	const : TOK_CONST typed_ident '=' TOK_INT . ';'  (11)
+
+	';'  shift 52
+	.  error
+
+
+state 40
+	const : TOK_CONST typed_ident '=' TOK_FLOAT . ';'  (12)
+
+	';'  shift 53
+	.  error
+
+
+state 41
+	const : TOK_CONST typed_ident '=' TOK_STR . ';'  (13)
+
+	';'  shift 54
+	.  error
+
+
+state 42
+	struct_arg : typed_ident . ';'  (17)
+
+	';'  shift 55
+	.  error
+
+
+state 43
+	struct : TOK_STRUCT def_ident '{' struct_arglist . '}' ';'  (14)
+	struct_arglist : struct_arglist . struct_arg  (16)
+	$$1 : .  (28)
+
+	'}'  shift 56
+	TOK_SEQUENCE  reduce 28
+	TOK_IDENT  reduce 28
+
+	typed_ident  goto 42
+	struct_arg  goto 57
+	$$1  goto 20
+
+
+state 44
+	struct_arglist : struct_arg .  (15)
+
+	.  reduce 15
+
+
+state 45
+	func_arg : typed_ident .  (27)
+
+	.  reduce 27
+
+
+state 46
+	function : typed_ident def_ident '(' arglist . ')' ';'  (23)
+
+	')'  shift 58
+	.  error
+
+
+state 47
+	arglist : func_arg .  (25)
+	arglist : func_arg . ';' arglist  (26)
+
+	';'  shift 59
+	')'  reduce 25
+
+
+state 48
+	type : TOK_SEQUENCE '<' type . '>'  (31)
+
+	'>'  shift 60
+	.  error
+
+
+state 49
+	enum_value : TOK_IDENT '=' . TOK_INT  (22)
+
+	TOK_INT  shift 61
+	.  error
+
+
+state 50
+	enum : TOK_ENUM def_ident '{' enum_list '}' . ';'  (18)
+
+	';'  shift 62
+	.  error
+
+
+state 51
+	enum_list : enum_list ',' . enum_value  (20)
+
+	TOK_IDENT  shift 36
+	.  error
+
+	enum_value  goto 63
+
+
+state 52
+	const : TOK_CONST typed_ident '=' TOK_INT ';' .  (11)
+
+	.  reduce 11
+
+
+state 53
+	const : TOK_CONST typed_ident '=' TOK_FLOAT ';' .  (12)
+
+	.  reduce 12
+
+
+state 54
+	const : TOK_CONST typed_ident '=' TOK_STR ';' .  (13)
+
+	.  reduce 13
+
+
+state 55
+	struct_arg : typed_ident ';' .  (17)
+
+	.  reduce 17
+
+
+state 56
+	struct : TOK_STRUCT def_ident '{' struct_arglist '}' . ';'  (14)
+
+	';'  shift 64
+	.  error
+
+
+state 57
+	struct_arglist : struct_arglist struct_arg .  (16)
+
+	.  reduce 16
+
+
+state 58
+	function : typed_ident def_ident '(' arglist ')' . ';'  (23)
+
+	';'  shift 65
+	.  error
+
+
+state 59
+	arglist : func_arg ';' . arglist  (26)
+	arglist : .  (24)
+	$$1 : .  (28)
+
+	TOK_SEQUENCE  reduce 28
+	TOK_IDENT  reduce 28
+	')'  reduce 24
+
+	typed_ident  goto 45
+	arglist  goto 66
+	func_arg  goto 47
+	$$1  goto 20
+
+
+state 60
+	type : TOK_SEQUENCE '<' type '>' .  (31)
+
+	.  reduce 31
+
+
+state 61
+	enum_value : TOK_IDENT '=' TOK_INT .  (22)
+
+	.  reduce 22
+
+
+state 62
+	enum : TOK_ENUM def_ident '{' enum_list '}' ';' .  (18)
+
+	.  reduce 18
+
+
+state 63
+	enum_list : enum_list ',' enum_value .  (20)
+
+	.  reduce 20
+
+
+state 64
+	struct : TOK_STRUCT def_ident '{' struct_arglist '}' ';' .  (14)
+
+	.  reduce 14
+
+
+state 65
+	function : typed_ident def_ident '(' arglist ')' ';' .  (23)
+
+	.  reduce 23
+
+
+state 66
+	arglist : func_arg ';' arglist .  (26)
+
+	.  reduce 26
+
+
+21 terminals, 20 nonterminals
+33 grammar rules, 67 states

@@ -1,0 +1,30 @@
+
+module SUMMATOR 
+{
+    //enum Color {red, green, blue};
+
+    struct numPair {
+        int first;
+        int second;
+    };
+
+    tsm_interface summator {
+    commands:
+        void add (in: numPair pair out: int result);
+        void sub (in: int first; int second out: int result);
+        //void makeColor(in: Color color);
+    };
+
+    /*
+    struct vecTest {
+        double result;
+        sequence<int> ints;
+    };
+    /* */
+
+    tsm_interface vecTester {
+    commands:
+        void tester( sequence< numPair > vector);
+    };
+    /* */
+}

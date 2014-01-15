@@ -1,0 +1,54 @@
+module test {
+    enum Color { red = 1, blue, green = 255 };
+
+    const float default = -10.7;
+
+    struct Obj {
+        int id;
+        Color color;
+        string name;
+    };
+
+    struct Object {
+        int id_obj;
+        sequence<Obj> ids;
+    };
+
+    struct numPair {
+        int first;
+        int second;
+    };
+
+    tsm_interface summator {
+    commands:
+        void add(in: numPair pair out: int result);
+    };
+
+    tsm_interface colorSetter {
+    events:
+        void colorChanged(Color color; float doub;  Obj object );
+        void colorChanged1(sequence<Object> doub);
+    commands:
+        void setColors(sequence<int> ids); //object
+        void askObjects(in: sequence<int> objects out: sequence<Object> result); //object
+    };
+
+/*    const int def = 100;
+
+    tsm_interface objectProcessor {
+    commands:
+        void checkColors(in:  sequence< sequence <int> > ids; Object id_obj; Color color;
+                         inout: int ids;
+                         out: sequence<Object> objects);
+        void testColors(inout: sequence< sequence<Object> > objects);
+    };*/
+}
+
+//module test1 {
+//    enum Color { red = 1, blue, green = 255 };
+//    struct Object {
+//        int id_obj;
+//        Color color;
+//    };
+//    enum Object { local };
+//}
